@@ -30,7 +30,7 @@ Datasets include:
 * EmoContext (SemEval 2019 Task 3)
 * EmoInt (Joy, Fear, Sad, Anger) (SemEval 2018 Task 1c)
 ```
-*Note that there are no individual datasets for SST-5. When evaluating SST-phrase, the results for SST-5 should also appear.* 
+* 请注意，SST-5没有单独的数据集。 在评估SST短语时，也应显示SST-5的结果。
 
 ### File Architecture (Selected important files)
 ```
@@ -62,14 +62,14 @@ export PYTHONPATH=$PYTHONPATH:XX/SentiBERT/
 export PYTHONPATH=$PYTHONPATH:XX/
 ```
 ### Preprocessing
-1. Split the raw text and golden labels of sentiment/emotion datasets into `xxx_train\dev\test.txt` and `xxx_train\dev\test_label.npy`, assuming that `xxx` represents task name.
-2. Obtain tree information. There are totally three situtations.
-* For tasks **except SST-phrase**, **SST-2,3,5**, put the files into `xxx_train\test.txt` files into `/stanford-corenlp-full-2018-10-05/`. To get binary sentiment constituency trees, please run
+1. 假设“xxx”代表任务名称，将sentiment/emotion数据集的原始文本和golden label分成`xxx_train\dev\test.txt`和`xxx_train\dev\test_label.npy`。 
+2. 获取树信息。 总共有三种情况。 
+* For tasks **except SST-phrase**, **SST-2,3,5**, put the files into `xxx_train\test.txt` files into `/stanford-corenlp-full-2018-10-05/`. 要获取二分类情感选举树，请运行:
 ```
 cd /stanford-corenlp-full-2018-10-05
 java -cp "*" edu.stanford.nlp.pipeline.StanfordCoreNLP -annotators tokenize,ssplit,pos,parse,sentiment -file xxx_train\test.txt -outputFormat json -ssplit.eolonly true -tokenize.whitespace true
 ```
-The tree information will be stored in `/stanford-corenlp-full-2018-10-05/xxx_train\test.txt.json`.
+树信息将存储在 `/stanford-corenlp-full-2018-10-05/xxx_train\test.txt.json`.
 * For **SST-2**, please use
 ```
 cd /stanford-corenlp-full-2018-10-05
@@ -78,21 +78,22 @@ java -cp "*" edu.stanford.nlp.pipeline.StanfordCoreNLP -annotators tokenize,sspl
 The tree information will be stored in `/stanford-corenlp-full-2018-10-05/sst2_train\dev_text.txt.json`.
 * For **SST-phrase** and **SST-3,5**, the tree information was already stored in `sstphrase_train\test.txt`.
 
-3. Run `/datasets/xxx/xxx_st.py` to clean, and store the text and label information in `xxx_train\dev\test_text_new.txt` and `xxx_label_train\dev\test.npy`. It also transforms the tree structure into matrices `/datasets/xxx/xxx_train\dev\test_span.npy` and `/datasets/xxx/xxx_train\dev\test_span_3.npy`. The first matrix is used as the range of constituencies in the first layer of our attention mechanism. The second matrix is used as the indices of each constituency's children nodes or subwords and itself in the second layer. Specifically, for tasks **other than EmoInt, SST-phrase, SST-5 and SST-3**, the command is like below:
+3. Run `/datasets/xxx/xxx_st.py` to clean, and store the text and label information in `xxx_train\dev\test_text_new.txt` and `xxx_label_train\dev\test.npy`. It also transforms the tree structure into matrices `/datasets/xxx/xxx_train\dev\test_span.npy` and `/datasets/xxx/xxx_train\dev\test_span_3.npy`. 
+第一个矩阵用作我们注意力机制第一层中选举的范围。 第二个矩阵用作第二层中每个选举的子节点或子词及其本身的索引。 具体来说，对于EmoInt，SST短语，SST-5和SST-3 **other than EmoInt, SST-phrase, SST-5 and SST-3**，命令如下所示： 
 ```
 cd /preprocessing
 
 python xxx_st.py \
-        --data_dir /datasets/xxx/ \                         ---> the location where you want to store preprocessed text, label and tree information 
-        --tree_dir /stanford-corenlp-full-2018-10-05/ \     ---> the location of unpreprocessed tree information (usually in Stanford CoreNLP repo)
+        --data_dir /datasets/xxx/ \                         ---> 您要存储预处理的文本，label和树信息的位置 
+        --tree_dir /stanford-corenlp-full-2018-10-05/ \     ---> 未预处理的树信息的位置(通常在Stanford CoreNLP repository中) 
         --stage train \                                     ---> "train", "test" or "dev"
 ```
-For **EmoInt**, the command is shown below:
+For **EmoInt**, 命令如下所示： 
 ```
 cd /preprocessing
 
 python xxx_st.py \
-        --data_dir /datasets/xxx/ \                         ---> the location where you want to store preprocessed text, label and tree information 
+        --data_dir /datasets/xxx/ \                         ---> 您要存储预处理的文本，label和树信息的位置  
         --tree_dir /stanford-corenlp-full-2018-10-05/ \     ---> the location of unpreprocessed tree information (usually in Stanford CoreNLP repo)
         --stage train \                                     ---> "train" or "test"
         --domain joy                                        ---> "joy", "sad", "fear" or "anger". Used in EmoInt task
@@ -108,7 +109,7 @@ python xxx_st.py \
 ```
 
 ## Pretraining
-1. Generate epochs for preparation
+1. 生成epoch进行准备 
 ```
 cd /examples/lm_finetuning
 
